@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>LogaraithmicRegression</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>src/main/resources/plot 0,001000.png</name>
+			<type>1</type>
+			<locationURI>PROJECT_LOC/plot%200,001000.png</locationURI>
+		</link>
+		<link>
+			<name>src/main/resources/plot 0,010000.png</name>
+			<type>1</type>
+			<locationURI>PROJECT_LOC/plot%200,010000.png</locationURI>
+		</link>
+		<link>
+			<name>src/main/resources/plot 0,100000.png</name>
+			<type>1</type>
+			<locationURI>PROJECT_LOC/plot%200,100000.png</locationURI>
+		</link>
+		<link>
+			<name>src/main/resources/plot 1,000000.png</name>
+			<type>1</type>
+			<locationURI>PROJECT_LOC/plot%201,000000.png</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>
