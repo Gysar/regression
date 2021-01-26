@@ -8,6 +8,7 @@
 *.exe
 .gdbinit
 .dbeaver
+*.png
 
 # Folder #
 ##########

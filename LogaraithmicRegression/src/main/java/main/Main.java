@@ -20,14 +20,14 @@ import plot.Plot.Line;
 public class Main {
 
 	public static void main(String[] args) {
-		final int DATA_SET_COUNT = 100;
+		final int DATA_SET_COUNT = 200;
 		final int ITERATION_COUNT = 2000;
 		final int STEPS_PER_SAFE= 100;
 		
 		RealMatrix x= DataCreator.getData(DATA_SET_COUNT);
 		double[][] line = DataCreator.getRandomLine(x);
 		RealVector y = DataCreator.evaluate(line, x);
-		for(double i=1;i>=0.001;i*=0.1) {
+		for(double i=1;i>=0.0001;i*=0.1) {
 			learn(ITERATION_COUNT, STEPS_PER_SAFE, x, y, i);
 		}
 	}
@@ -92,8 +92,8 @@ public class Main {
 	
 	private static void plotPointsWithFunction(RealMatrix x, RealVector y, List<RealMatrix>weights,String name) {
 
-		double min= -5;
-		double max= 5;
+		double min= -2;
+		double max= 2;
 		double[] allx=x.getRow(1);
 		double[] ally=x.getRow(2);
 		List<Double> positivex=new ArrayList<Double>();
