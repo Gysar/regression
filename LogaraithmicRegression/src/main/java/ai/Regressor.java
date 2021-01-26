@@ -81,8 +81,10 @@ public class Regressor {
 	public RealMatrix CrossEntropyCostMatrix(RealMatrix w) {
 		RealMatrix xCalculate = x.copy();
 		RealMatrix yMatrix= toMatrix(y);
-		yMatrix=yMatrix.scalarAdd(-1*hypothesis(w));
-		yMatrix=yMatrix.scalarMultiply(-1).transpose();
+		
+		yMatrix=yMatrix.scalarMultiply(-1);
+		yMatrix=yMatrix.scalarAdd(hypothesis(w));
+		yMatrix=yMatrix.transpose();
 		xCalculate=xCalculate.multiply(yMatrix);
 		double scalar=(double)1/y.getDimension();
 		return xCalculate.scalarMultiply(scalar);
