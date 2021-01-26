@@ -127,11 +127,11 @@ public class Main {
 			        Plot.seriesOpts().line(Line.NONE).
 			            marker(Plot.Marker.CIRCLE).
 			            markerColor(Color.RED))
-		    .series("last weights", Plot.data().xy(new double[]{-1,1},new double[]{function(weights.get(weights.size()-1),-1),function(weights.get(weights.size()-1),1)}),
+		    .series("last weights", Plot.data().xy(new double[]{min,max},new double[]{function(weights.get(weights.size()-1),min),function(weights.get(weights.size()-1),max)}),
 			        Plot.seriesOpts().line(Line.SOLID).
 			        color(Color.BLUE).
 			            marker(Plot.Marker.NONE))
-		    .series("first weights", Plot.data().xy(new double[]{-1,1},new double[]{function(weights.get(0),-1),function(weights.get(0),1)}),
+		    .series("first weights", Plot.data().xy(new double[]{min,max},new double[]{function(weights.get(0),min),function(weights.get(0),max)}),
 			        Plot.seriesOpts().line(Line.SOLID).
 			        	color(Color.MAGENTA).
 			            marker(Plot.Marker.NONE))
