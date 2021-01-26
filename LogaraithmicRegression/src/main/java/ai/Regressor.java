@@ -46,7 +46,7 @@ public class Regressor {
 				weightsHistory.add(w);
 			}
 		}
-		weightsHistory.add(w);
+//		weightsHistory.add(w);
 		return weightsHistory;
 	}
 	
@@ -101,9 +101,8 @@ public class Regressor {
 	}
 	
 	public double sigmoid(double value) {
-//		Sigmoid sigmoid = new Sigmoid();
-//		return sigmoid.value(value);
-		return (double)1/(1+Math.pow(Math.E,-1*value));
+		Sigmoid sigmoid = new Sigmoid();
+		return sigmoid.value(value);
 	}
 	
 
