@@ -34,6 +34,7 @@ public class Regressor {
 		this.x = x;
 		this.y = y;
 		this.w = MatrixUtils.createRealMatrix(3,1);
+//		this.w = MatrixUtils.createRealMatrix(new double[][]{{1},{1},{1}});
 		alpha=0.1;
 	}
 	

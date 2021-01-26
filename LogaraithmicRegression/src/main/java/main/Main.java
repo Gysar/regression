@@ -3,9 +3,11 @@ package main;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream.GetField;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -13,6 +15,7 @@ import ai.Regressor;
 import data.DataCreator;
 import plot.Plot;
 import plot.Plot.AxisFormat;
+import plot.Plot.Line;
 
 public class Main {
 
@@ -41,8 +44,9 @@ public class Main {
 			middleCosts.add(regressor.middleCrossEntropyCost(weightHistory.get(i)));
 			iterations.add((double) ((int)(i*STEPS_PER_SAFE)));
 		}
-		String name=String.format("plot %.6f",alpha);
-		plot(middleCosts,iterations,name);
+
+		plot(middleCosts,iterations,String.format("plot %.6f",alpha));
+		plotPointsWithFunction(x,y,weightHistory,String.format("data %.6f",alpha));
 	}
 	
 	
@@ -72,7 +76,79 @@ public class Main {
 		            color(Color.BLACK));
 
 		try {
-			plot.save(name, "png");
+			plot.save("res/"+name, "png");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private static double function(RealMatrix weights, double x) {		
+		//weights.multiply(left).getEntry(0,0),weights.multiply(right).getEntry(0,0)
+		
+		
+		return weights.getEntry(0, 0)+weights.getEntry(1, 0)*x+weights.getEntry(2, 0)*x;
+	}
+	
+	private static void plotPointsWithFunction(RealMatrix x, RealVector y, List<RealMatrix>weights,String name) {
+
+		double min= -5;
+		double max= 5;
+		double[] allx=x.getRow(1);
+		double[] ally=x.getRow(2);
+		List<Double> positivex=new ArrayList<Double>();
+		List<Double> positivey=new ArrayList<Double>();
+		List<Double> negativex=new ArrayList<Double>();
+		List<Double> negativey=new ArrayList<Double>();
+		for(int i=0;i<allx.length;i++) {
+			if(y.getEntry(i)==1) {
+				positivex.add(allx[i]);
+				positivey.add(ally[i]);
+			}else {
+				negativex.add(allx[i]);
+				negativey.add(ally[i]);
+			}
+		}
+		
+		Plot plot = Plot.plot(Plot.plotOpts().
+		        title("points").
+		        legend(Plot.LegendFormat.BOTTOM)).
+		    xAxis("x", Plot.axisOpts()
+		    		.
+		        range(min, max)).
+		    
+		    yAxis("y", Plot.axisOpts().
+		        range(min,max))
+		    .series("PositivePoints", Plot.data().xy(positivex,positivey),
+		        Plot.seriesOpts().line(Line.NONE).
+		            marker(Plot.Marker.CIRCLE).
+		            markerColor(Color.GREEN))
+		    .series("NegativePoints", Plot.data().xy(negativex,negativey),
+			        Plot.seriesOpts().line(Line.NONE).
+			            marker(Plot.Marker.CIRCLE).
+			            markerColor(Color.RED))
+		    .series("last weights", Plot.data().xy(new double[]{-1,1},new double[]{function(weights.get(weights.size()-1),-1),function(weights.get(weights.size()-1),1)}),
+			        Plot.seriesOpts().line(Line.SOLID).
+			        color(Color.BLUE).
+			            marker(Plot.Marker.NONE))
+		    .series("first weights", Plot.data().xy(new double[]{-1,1},new double[]{function(weights.get(0),-1),function(weights.get(0),1)}),
+			        Plot.seriesOpts().line(Line.SOLID).
+			        	color(Color.MAGENTA).
+			            marker(Plot.Marker.NONE))
+		    .series("GRIDX", Plot.data().xy(new double[]{min,max},new double[]{0,0}),
+			        Plot.seriesOpts().
+			        line(Line.DASHED).
+			        color(Color.BLACK).
+			            marker(Plot.Marker.NONE))
+		    .series("GRIDY", Plot.data().xy(new double[]{0,0},new double[]{min,max}),
+			        Plot.seriesOpts().
+			        line(Line.DASHED).
+			        color(Color.BLACK).
+			        	marker(Plot.Marker.NONE))
+		    ;
+
+		try {
+			plot.save("res/"+name, "png");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
