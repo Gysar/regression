@@ -5,8 +5,11 @@ import java.util.List;
 
 import org.apache.commons.math3.analysis.function.Sigmoid;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.DefaultRealMatrixChangingVisitor;
+import org.apache.commons.math3.linear.DefaultRealMatrixPreservingVisitor;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealMatrixChangingVisitor;
 import org.apache.commons.math3.linear.RealVector;
 
 public class Regressor {
@@ -44,8 +47,9 @@ public class Regressor {
 			if(i%stepsPerSafe==0) {
 				weightsHistory.add(w);
 			}
+			
 		}
-//		weightsHistory.add(w);
+		weightsHistory.add(w);
 		return weightsHistory;
 	}
 	
@@ -57,23 +61,35 @@ public class Regressor {
 	}
 	
 	public double crossEntropyLoss(double y, double y_) {
-		double num= -1*(y*Math.log(y_)+(1-y)*Math.log(1-y_));
-		return num;
+		return  -1*(y*Math.log(y_)-(1-y)*Math.log(1-y_));
 	}
 	
-	public double middleCrossEntropyCost(RealMatrix w) {
-		double cost=0;
-		RealVector v=new ArrayRealVector(y.getDimension(),hypothesis(w));
-		cost=toMatrix(y).transpose().multiply(toMatrix(v)).getEntry(0, 0);
-		return (cost/y.getDimension());
+	public double crossEntropyCost(RealMatrix w) {
+		double cost=0;		
+		RealMatrix m = hypothesis(w);
+		m.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
+	        @Override
+	        public double visit(int row, int column, double value) {
+	            return crossEntropyLoss(y.getEntry(row),value);
+	        }
+	    });
+		cost=m.multiply(MatrixUtils.createRealMatrix(m.getColumnDimension(), m.getRowDimension()).scalarAdd(1)).getEntry(0,0);
+		cost=(cost/y.getDimension());
+		return cost;
 	}
 	
-	public double hypothesis(RealMatrix w) {
-		double z=w.transpose().multiply(x).getEntry(0, 0);
-		return sigmoid(z);
+	public RealMatrix hypothesis(RealMatrix w) {
+		RealMatrix temp=w.transpose().multiply(x);
+		temp.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
+	        @Override
+	        public double visit(int row, int column, double value) {
+	            return new Sigmoid().value(value);
+	        }
+	    });
+		return temp;
 	}
 	
-	public double hypothesis() {
+	public RealMatrix hypothesis() {
 		return hypothesis(w);
 	}
 	
@@ -82,7 +98,7 @@ public class Regressor {
 		RealMatrix yMatrix= toMatrix(y);
 		
 		yMatrix=yMatrix.scalarMultiply(-1);
-		yMatrix=yMatrix.scalarAdd(hypothesis(w));
+		yMatrix=yMatrix.add(hypothesis(w));
 		yMatrix=yMatrix.transpose();
 		xCalculate=xCalculate.multiply(yMatrix);
 		double scalar=(double)1/y.getDimension();
@@ -98,11 +114,4 @@ public class Regressor {
 		data[0]=vector.toArray();
 		return MatrixUtils.createRealMatrix(data);
 	}
-	
-	public double sigmoid(double value) {
-		Sigmoid sigmoid = new Sigmoid();
-		return sigmoid.value(value);
-	}
-	
-
 }

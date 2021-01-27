@@ -20,7 +20,7 @@ import plot.Plot.Line;
 public class Main {
 
 	public static void main(String[] args) {
-		final int DATA_SET_COUNT = 200;
+		final int DATA_SET_COUNT = 100;
 		final int ITERATION_COUNT = 2000;
 		final int STEPS_PER_SAFE= 100;
 		
@@ -41,8 +41,8 @@ public class Main {
 		List<Double> middleCosts = new LinkedList<Double>();
 		
 		for(int i = 0; i<weightHistory.size();i++) {
-			middleCosts.add(regressor.middleCrossEntropyCost(weightHistory.get(i)));
-			iterations.add((double) ((int)(i*STEPS_PER_SAFE)));
+			middleCosts.add(regressor.crossEntropyCost(weightHistory.get(i)));
+			iterations.add((double) (i*STEPS_PER_SAFE));
 		}
 
 		plot(middleCosts,iterations,String.format("plot %.6f",alpha));
@@ -66,7 +66,7 @@ public class Main {
 		        range(0, iterations.get(iterations.size()-1))).
 		    
 		    yAxis("costs", Plot.axisOpts().
-		    	format(AxisFormat.NUMBER).
+		    	
 		        range(min,max)).
 		    
 		    series("Data", Plot.data().xy(iterations, costs),
@@ -83,15 +83,12 @@ public class Main {
 		}
 	}
 	
-	private static double function(RealMatrix weights, double x) {		
-		//weights.multiply(left).getEntry(0,0),weights.multiply(right).getEntry(0,0)
-		
-		
-		return weights.getEntry(0, 0)+weights.getEntry(1, 0)*x+weights.getEntry(2, 0)*x;
+	private static double function(RealMatrix weights, double[] x) {		
+		return weights.getEntry(0, 0)*x[0]+weights.getEntry(1, 0)*x[1]+weights.getEntry(2, 0)*x[2];
 	}
 	
 	private static void plotPointsWithFunction(RealMatrix x, RealVector y, List<RealMatrix>weights,String name) {
-
+		System.out.println(name+"   "+weights.get(weights.size()-1));
 		double min= -2;
 		double max= 2;
 		double[] allx=x.getRow(1);
@@ -113,11 +110,11 @@ public class Main {
 		Plot plot = Plot.plot(Plot.plotOpts().
 		        title("points").
 		        legend(Plot.LegendFormat.BOTTOM)).
-		    xAxis("x", Plot.axisOpts()
+		    xAxis("x1", Plot.axisOpts()
 		    		.
 		        range(min, max)).
 		    
-		    yAxis("y", Plot.axisOpts().
+		    yAxis("x2", Plot.axisOpts().
 		        range(min,max))
 		    .series("PositivePoints", Plot.data().xy(positivex,positivey),
 		        Plot.seriesOpts().line(Line.NONE).
@@ -127,11 +124,11 @@ public class Main {
 			        Plot.seriesOpts().line(Line.NONE).
 			            marker(Plot.Marker.CIRCLE).
 			            markerColor(Color.RED))
-		    .series("last weights", Plot.data().xy(new double[]{min,max},new double[]{function(weights.get(weights.size()-1),min),function(weights.get(weights.size()-1),max)}),
+		    .series("last weights", Plot.data().xy(new double[]{min,max},new double[]{function(weights.get(weights.size()-1),new double[] {1,min,min}),function(weights.get(weights.size()-1),new double[] {1,max,max})}),
 			        Plot.seriesOpts().line(Line.SOLID).
 			        color(Color.BLUE).
 			            marker(Plot.Marker.NONE))
-		    .series("first weights", Plot.data().xy(new double[]{min,max},new double[]{function(weights.get(0),min),function(weights.get(0),max)}),
+		    .series("first weights", Plot.data().xy(new double[]{min,max},new double[]{function(weights.get(0),new double[] {1,min,min}),function(weights.get(0),new double[] {1,max,max})}),
 			        Plot.seriesOpts().line(Line.SOLID).
 			        	color(Color.MAGENTA).
 			            marker(Plot.Marker.NONE))
